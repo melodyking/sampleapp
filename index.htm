@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 REST WCF Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.css" />
+	<script src="phonegap.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.js"></script>
+</head>
+<body>
+    <div data-role="page">
+
+        <div data-role="header">
+            <h1>Sample HTML5 Page</h1>
+        </div>
+
+        <div data-role="content">
+            <button id="ajax">Retrieve data from server</button>
+
+            <br />
+
+            <div id="servercontent">
+                <ul id="mainlist" data-role="listview">
+	                <li id="load">Results will appear here</li>
+                </ul>
+            </div>
+            
+            <script type="text/javascript">
+                // Provide a click event for the button named "ajax"
+                $('#ajax').click(function () {
+                    $.ajax({
+                        type: "GET",
+                        url: "http://192.168.0.203/mobileservice/retrievedetails/jay", 
+                        dataType: "xml",
+                        success: parse,
+                        error: function () { alert("Error in AJAX.") }
+                    });
+                });
+
+                // Fade in effect for lists
+                function fadeLI(elem) { elem.fadeIn(500, function () { fadeLI($(this).next()); }); }
+
+                // function for parsing received xml stream via REST
+                function parse(responseXMLStream) {
+
+                    // Extract the xml data that was wrapped in XMLDataResponse
+                    var xmlData = $(responseXMLStream).find('string').text();
+
+                    // Render data into UI
+                    $('#mainlist').html('');
+                    $(xmlData).find('Person').each(function() {
+                        firstName = $(this).find('FirstName').text();
+                        lastName = $(this).find('LastName').text();
+                        nickName = $(this).find('NickName').text();
+
+                        $('#mainlist').append('<li>' + firstName + ' ' + lastName + ' (' + nickName + ')' + '</li>\n');
+                        $('#mainlist').listview('refresh');
+
+                    });
+                }
+
+            </script>
+        </div>
+
+    </div>
+</body>
+</html>
